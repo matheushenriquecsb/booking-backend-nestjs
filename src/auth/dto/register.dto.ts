@@ -6,6 +6,7 @@ import {
   MaxLength,
   IsStrongPassword,
   Matches,
+  IsPhoneNumber,
 } from 'class-validator';
 import { username } from '../helpers/validations';
 
@@ -21,6 +22,22 @@ export class RegisterAuthDto {
   @IsNotEmpty()
   @MaxLength(50)
   email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+
+  @IsString()
+  @IsNotEmpty()
+  city: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsPhoneNumber('BR')
+  phone: string;
+
+  @IsString()
+  img: string;
 
   @IsString()
   @IsStrongPassword()
