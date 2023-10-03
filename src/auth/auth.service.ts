@@ -4,11 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginAuthDto, RegisterAuthDto } from './dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Auth } from './models/auth.model';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
+
+import { LoginAuthDto, RegisterAuthDto } from './dto';
+import { Auth } from './models/auth.model';
 
 @Injectable()
 export class AuthService {
