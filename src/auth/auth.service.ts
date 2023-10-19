@@ -8,8 +8,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
-import { LoginAuthDto, RegisterAuthDto } from './dto';
+import {
+  LoginAuthRequestDto,
+  RegisterAuthRequestDto,
+  RegisterAuthResponseDto,
+} from './dto';
 import { Auth } from './models/auth.model';
+import LoginAuthResponseDto from './dto/login-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +22,9 @@ export class AuthService {
     @InjectModel(Auth.name) private authModel: Model<Auth>,
     private jwtService: JwtService,
   ) {}
-  async register(registerDto: RegisterAuthDto) {
+  async register(
+    registerDto: RegisterAuthRequestDto,
+  ): Promise<RegisterAuthResponseDto> {
     const checkUser = await this.authModel.findOne({
       username: registerDto.username,
     });
@@ -28,8 +35,17 @@ export class AuthService {
       );
     }
 
+    const checkEmail = await this.authModel.findOne({
+      email: registerDto.email,
+    });
+
+    if (checkEmail) {
+      throw new BadRequestException(
+        `Email ${registerDto.email} already registered`,
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-    console.log(hashedPassword);
 
     try {
       const user = await this.authModel.create({
@@ -45,7 +61,7 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginAuthDto) {
+  async login(loginDto: LoginAuthRequestDto): Promise<LoginAuthResponseDto> {
     const user = await this.authModel.findOne({
       username: loginDto.username,
     });

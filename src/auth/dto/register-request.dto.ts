@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { username } from '../helpers/validations';
 
-export class RegisterAuthDto {
+export class RegisterAuthRequestDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(12)
