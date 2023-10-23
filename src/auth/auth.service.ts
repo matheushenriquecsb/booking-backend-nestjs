@@ -8,11 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
-import {
-  LoginAuthRequestDto,
-  RegisterAuthRequestDto,
-  RegisterAuthResponseDto,
-} from './dto';
+import { LoginAuthRequestDto, RegisterAuthRequestDto } from './dto';
 import { Auth } from './models/auth.model';
 import LoginAuthResponseDto from './dto/login-response.dto';
 
@@ -22,9 +18,7 @@ export class AuthService {
     @InjectModel(Auth.name) private authModel: Model<Auth>,
     private jwtService: JwtService,
   ) {}
-  async register(
-    registerDto: RegisterAuthRequestDto,
-  ): Promise<RegisterAuthResponseDto> {
+  async register(registerDto: RegisterAuthRequestDto) {
     const checkUser = await this.authModel.findOne({
       username: registerDto.username,
     });
