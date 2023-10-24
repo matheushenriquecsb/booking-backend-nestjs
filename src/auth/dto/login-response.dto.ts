@@ -1,3 +1,3 @@
-export default class LoginAuthResponseDto {
+export class LoginUserResponseDto {
   access_token: string;
 }

@@ -1,13 +1,23 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateHotelDto } from './dto/create-hotel.dto';
-import { UpdateHotelDto } from './dto/update-hotel.dto';
-import { Hotel } from './models/hotel.model';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import {
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
+
+import { CreateHotelDto, UpdateHotelDto } from './dto';
+import { Hotel } from './models/hotel.model';
 
 @Injectable()
 export class HotelsService {
-  constructor(@InjectModel(Hotel.name) private hotelModel: Model<Hotel>) {}
+  constructor(
+    @InjectModel(Hotel.name) private hotelModel: Model<Hotel>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   async create(createHotelDto: CreateHotelDto) {
     try {
@@ -19,6 +29,12 @@ export class HotelsService {
   }
 
   async findOne(id: string) {
+    const hotelFromCache = await this.getHotelFromCache(id);
+
+    if (hotelFromCache) {
+      return hotelFromCache;
+    }
+
     const hotel = await this.hotelModel.findOne({ _id: id }).exec();
     if (!hotel) {
       throw new NotFoundException({
@@ -26,6 +42,8 @@ export class HotelsService {
         message: 'Hotel not found',
       });
     }
+
+    await this.setHotelToCache(`${id}`, hotel);
 
     return hotel;
   }
@@ -56,5 +74,24 @@ export class HotelsService {
     }
     await this.hotelModel.findByIdAndRemove({ _id: id });
     return;
+  }
+
+  private async getHotelFromCache(cacheKey: string): Promise<Partial<Hotel>> {
+    try {
+      return await this.cacheManager.get(`${cacheKey}`);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  private async setHotelToCache(
+    cacheKey: string,
+    cacheValue: any,
+  ): Promise<void> {
+    try {
+      await this.cacheManager.set(`${cacheKey}`, cacheValue);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

@@ -1,16 +1,17 @@
 import {
   IsBoolean,
-  IsString,
-  IsNotEmpty,
   IsEmail,
-  MaxLength,
+  IsNotEmpty,
+  IsPhoneNumber,
+  IsString,
   IsStrongPassword,
   Matches,
-  IsPhoneNumber,
+  MaxLength,
 } from 'class-validator';
+
 import { username } from '../helpers/validations';
 
-export class RegisterAuthRequestDto {
+export class RegisterUserRequestDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(12)
