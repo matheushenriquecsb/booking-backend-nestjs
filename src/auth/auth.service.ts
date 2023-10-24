@@ -1,6 +1,6 @@
 import {
-  Injectable,
   BadRequestException,
+  Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -8,17 +8,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
-import { LoginAuthRequestDto, RegisterAuthRequestDto } from './dto';
-import { Auth } from './models/auth.model';
-import LoginAuthResponseDto from './dto/login-response.dto';
+import {
+  LoginUserRequestDto,
+  LoginUserResponseDto,
+  RegisterUserRequestDto,
+} from './dto';
+import { User } from './models/user.model';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(Auth.name) private authModel: Model<Auth>,
+    @InjectModel(User.name) private authModel: Model<User>,
     private jwtService: JwtService,
   ) {}
-  async register(registerDto: RegisterAuthRequestDto) {
+  async register(registerDto: RegisterUserRequestDto) {
     const checkUser = await this.authModel.findOne({
       username: registerDto.username,
     });
@@ -55,7 +58,7 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginAuthRequestDto): Promise<LoginAuthResponseDto> {
+  async login(loginDto: LoginUserRequestDto): Promise<LoginUserResponseDto> {
     const user = await this.authModel.findOne({
       username: loginDto.username,
     });

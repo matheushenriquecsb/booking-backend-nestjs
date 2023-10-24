@@ -22,7 +22,7 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);

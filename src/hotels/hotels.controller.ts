@@ -10,10 +10,11 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+
 import { HotelsService } from './hotels.service';
 import { CreateHotelDto } from './dto/create-hotel.dto';
 import { UpdateHotelDto } from './dto/update-hotel.dto';
-import { AuthGuard } from 'src/config/guards/permissions.guard';
+import { AuthGuard } from '../config/guards/permissions.guard';
 
 @Controller('hotels')
 export class HotelsController {
