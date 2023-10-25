@@ -21,7 +21,7 @@ export class AuthService {
     @InjectModel(User.name) private authModel: Model<User>,
     private jwtService: JwtService,
   ) {}
-  async register(registerDto: RegisterUserRequestDto) {
+  async register(registerDto: RegisterUserRequestDto): Promise<Partial<User>> {
     const checkUser = await this.authModel.findOne({
       username: registerDto.username,
     });
@@ -50,9 +50,9 @@ export class AuthService {
         password: hashedPassword,
       });
 
-      const { username, email, id } = user;
+      const { username, email } = user;
 
-      return { username, email, id };
+      return { username, email };
     } catch (error) {
       throw new Error(error);
     }

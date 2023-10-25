@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthServiceSpy } from './test';
-import { RegisterAuthRequestDto } from './dto';
+import { RegisterUserRequestDto } from './dto';
 
 type SutType = {
   sut: AuthController;
@@ -35,7 +35,7 @@ describe('AuthController', () => {
   it('shoulde create a register', async () => {
     const { sut } = await makeSut();
 
-    const payload: RegisterAuthRequestDto = {
+    const payload: RegisterUserRequestDto = {
       username: 'Teste',
       email: 'test@gmail.com',
       country: 'Brasil',

@@ -1,37 +1,56 @@
 import {
+  Body,
   Controller,
-  Get,
-  Param,
   Delete,
-  UseGuards,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
+  UseGuards,
+  Inject,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { AuthGuard } from 'src/config/guards/permissions.guard';
+
+import { AuthGuard } from '../config/guards/permissions.guard';
+import { User } from '../auth/models/user.model';
+import { UpdateUserDto } from './dto';
+import { UserServiceInterface } from './interface';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject('UserServiceInterface')
+    private readonly usersService: UserServiceInterface,
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get()
-  async findAll() {
-    return this.usersService.findAll();
-  }
-
-  @HttpCode(HttpStatus.OK)
-  //@UseGuards(AuthGuard)
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  async findAllUsers(): Promise<User[]> {
+    return this.usersService.findAllUsers();
   }
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @Get(':userid')
+  async findOneUser(@Param('userid') userId: string): Promise<User> {
+    return this.usersService.findOneUser(userId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Delete(':userid')
+  async removeUser(@Param('userid') userId: string): Promise<void> {
+    return this.usersService.removeUser(userId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Patch(':userid')
+  async updateUser(
+    @Param('userid') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return this.usersService.updateUser(userId, updateUserDto);
   }
 }

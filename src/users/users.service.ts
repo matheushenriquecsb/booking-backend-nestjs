@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   HttpStatus,
@@ -10,37 +11,26 @@ import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
 
 import { User } from '../auth/models/user.model';
+import { UpdateUserDto } from './dto';
+import { UserServiceInterface } from './interface';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements UserServiceInterface {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async findAll() {
-    const users = await this.userModel.find();
-
-    return users.map((users) => ({
-      _id: users.id,
-      username: users.username,
-      email: users.email,
-      country: users.country,
-      city: users.country,
-      phone: users.phone,
-      img: users.img,
-      isAdmin: users.isAdmin,
-    }));
+  async findAllUsers(): Promise<User[]> {
+    return this.userModel.find().exec();
   }
 
-  async findOne(id: string) {
+  async findOneUser(id: string): Promise<User> {
     const userFromCache = await this.getUserFromCache(id);
 
     if (userFromCache) {
       return userFromCache;
     }
-
-    console.log('caindo aqui');
 
     const user = await this.userModel.findOne({ _id: id }).exec();
     console.log(user);
@@ -57,16 +47,33 @@ export class UsersService {
     return user;
   }
 
-  async remove(id: string) {
+  async removeUser(id: string): Promise<void> {
     const user = await this.userModel.findById({ _id: id });
     if (!user) {
       throw new NotFoundException();
     }
 
-    return this.userModel.deleteOne({ _id: user.id });
+    await this.userModel.deleteOne({ _id: user.id });
   }
 
-  private async getUserFromCache(cacheKey: string): Promise<Partial<User>> {
+  async updateUser(id: string, user: UpdateUserDto): Promise<User> {
+    const userUpdated = await this.userModel.findOneAndUpdate(
+      { _id: id },
+      { $set: user },
+      { new: true },
+    );
+
+    if (!userUpdated) {
+      throw new NotFoundException({
+        code: HttpStatus.NOT_FOUND,
+        message: 'Hotel not found',
+      });
+    }
+
+    return userUpdated;
+  }
+
+  private async getUserFromCache(cacheKey: string): Promise<User> {
     try {
       return await this.cacheManager.get(`${cacheKey}`);
     } catch (error) {
@@ -80,7 +87,6 @@ export class UsersService {
   ): Promise<void> {
     try {
       await this.cacheManager.set(`${cacheKey}`, cacheValue);
-      console.log('setando no cache');
     } catch (error) {
       throw new Error(error);
     }
