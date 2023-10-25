@@ -18,6 +18,17 @@ import { User, UserSchema } from './models/user.model';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [
+    {
+      provide: 'AuthServiceInterface',
+      useClass: AuthService,
+    },
+  ],
+  exports: [
+    {
+      provide: 'AuthServiceInterface',
+      useClass: AuthService,
+    },
+  ],
 })
 export class AuthModule {}
