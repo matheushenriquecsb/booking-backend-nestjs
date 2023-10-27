@@ -11,15 +11,18 @@ import { Model } from 'mongoose';
 
 import { CreateHotelDto, UpdateHotelDto } from './dto';
 import { Hotel } from './models/hotel.model';
+import { HotelServiceInterface } from './interface';
+import { Room } from 'src/rooms/model/room.model';
 
 @Injectable()
-export class HotelsService {
+export class HotelsService implements HotelServiceInterface {
   constructor(
+    @InjectModel(Room.name) private roomModel: Model<Room>,
     @InjectModel(Hotel.name) private hotelModel: Model<Hotel>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async create(createHotelDto: CreateHotelDto) {
+  async createHotel(createHotelDto: CreateHotelDto): Promise<Hotel> {
     try {
       const hotel = await this.hotelModel.create(createHotelDto);
       return hotel;
@@ -28,7 +31,7 @@ export class HotelsService {
     }
   }
 
-  async findOne(id: string) {
+  async findOneHotel(id: string): Promise<Hotel> {
     const hotelFromCache = await this.getHotelFromCache(id);
 
     if (hotelFromCache) {
@@ -48,7 +51,38 @@ export class HotelsService {
     return hotel;
   }
 
-  async update(id: string, updateHotelDto: UpdateHotelDto) {
+  async getHotels(): Promise<Hotel[]> {
+    return this.hotelModel.find().exec();
+  }
+
+  async getHotelsRooms(hotelId: string) {
+    return;
+  }
+
+  async getHotelsType() {
+    const hotelCount = await this.hotelModel.countDocuments({ type: 'hotel' });
+    const apartmentCount = await this.hotelModel.countDocuments({
+      type: 'apartment',
+    });
+    const resortCount = await this.hotelModel.countDocuments({
+      type: 'resort',
+    });
+    const villaCount = await this.hotelModel.countDocuments({ type: 'villa' });
+    const cabinCount = await this.hotelModel.countDocuments({ type: 'cabin' });
+
+    return [
+      { type: 'hotel', count: hotelCount },
+      { type: 'apartments', count: apartmentCount },
+      { type: 'resorts', count: resortCount },
+      { type: 'villas', count: villaCount },
+      { type: 'cabins', count: cabinCount },
+    ];
+  }
+
+  async updateHotel(
+    id: string,
+    updateHotelDto: UpdateHotelDto,
+  ): Promise<Hotel> {
     const hotel = await this.hotelModel.findOneAndUpdate(
       { _id: id },
       updateHotelDto,
@@ -64,7 +98,7 @@ export class HotelsService {
     return hotel;
   }
 
-  async remove(id: string) {
+  async removeHotel(id: string): Promise<void> {
     const hotel = await this.hotelModel.findOne({ _id: id });
     if (!hotel) {
       throw new NotFoundException({
@@ -76,7 +110,7 @@ export class HotelsService {
     return;
   }
 
-  private async getHotelFromCache(cacheKey: string): Promise<Partial<Hotel>> {
+  private async getHotelFromCache(cacheKey: string): Promise<Hotel> {
     try {
       return await this.cacheManager.get(`${cacheKey}`);
     } catch (error) {
