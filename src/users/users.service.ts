@@ -32,7 +32,7 @@ export class UsersService implements UserServiceInterface {
       return userFromCache;
     }
 
-    const user = await this.userModel.findOne({ _id: id }).exec();
+    const user = await this.userModel.findById({ _id: id }).exec();
     console.log(user);
 
     if (!user) {

@@ -13,15 +13,18 @@ import {
   LoginUserResponseDto,
   RegisterUserRequestDto,
 } from './dto';
+import { AuthServiceInterface } from './interface';
 import { User } from './models/user.model';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements AuthServiceInterface {
   constructor(
     @InjectModel(User.name) private authModel: Model<User>,
     private jwtService: JwtService,
   ) {}
-  async register(registerDto: RegisterUserRequestDto): Promise<Partial<User>> {
+  async registerUser(
+    registerDto: RegisterUserRequestDto,
+  ): Promise<Partial<User>> {
     const checkUser = await this.authModel.findOne({
       username: registerDto.username,
     });
@@ -58,7 +61,9 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginUserRequestDto): Promise<LoginUserResponseDto> {
+  async loginUser(
+    loginDto: LoginUserRequestDto,
+  ): Promise<LoginUserResponseDto> {
     const user = await this.authModel.findOne({
       username: loginDto.username,
     });

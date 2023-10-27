@@ -3,7 +3,12 @@ import { RegisterUserRequestDto } from '../dto';
 import { User } from '../models/user.model';
 
 export class AuthServiceSpy {
-  async register(registerDto: RegisterUserRequestDto): Promise<Partial<User>> {
+  registerDto = null;
+
+  async registerUser(
+    registerDto: RegisterUserRequestDto,
+  ): Promise<Partial<User>> {
+    this.registerDto = registerDto;
     return Promise.resolve(mockRegisterResponse());
   }
 }

@@ -9,29 +9,52 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 
-import { HotelsService } from './hotels.service';
 import { CreateHotelDto } from './dto/create-hotel.dto';
 import { UpdateHotelDto } from './dto/update-hotel.dto';
 import { AuthGuard } from '../config/guards/permissions.guard';
+import { HotelServiceInterface } from './interface';
+import { Hotel } from './models/hotel.model';
 
 @Controller('hotels')
 export class HotelsController {
-  constructor(private readonly hotelsService: HotelsService) {}
+  constructor(
+    @Inject('HotelServiceInterface')
+    private readonly hotelsService: HotelServiceInterface,
+  ) {}
 
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createHotelDto: CreateHotelDto) {
-    return this.hotelsService.create(createHotelDto);
+  createHotel(@Body() createHotelDto: CreateHotelDto): Promise<Hotel> {
+    return this.hotelsService.createHotel(createHotelDto);
   }
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get('/find/:hotelId')
-  findOne(@Param('hotelId') hotelId: string) {
-    return this.hotelsService.findOne(hotelId);
+  findOneHotel(@Param('hotelId') hotelId: string): Promise<Hotel> {
+    return this.hotelsService.findOneHotel(hotelId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/')
+  getHotels(): Promise<Hotel[]> {
+    return this.hotelsService.getHotels();
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/countByType')
+  getHotelsType(): Promise<Partial<Hotel>> {
+    return this.hotelsService.getHotelsType();
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/room/:hotelid')
+  getHotelsRooms(@Param('hotelid') hotelId: string) {
+    return this.hotelsService.getHotelsRooms(hotelId);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -40,14 +63,14 @@ export class HotelsController {
   update(
     @Param('hotelId') hotelId: string,
     @Body() updateHotelDto: UpdateHotelDto,
-  ) {
-    return this.hotelsService.update(hotelId, updateHotelDto);
+  ): Promise<Hotel> {
+    return this.hotelsService.updateHotel(hotelId, updateHotelDto);
   }
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Delete(':hotelId')
-  remove(@Param('hotelId') hotelId: string) {
-    return this.hotelsService.remove(hotelId);
+  removeHotel(@Param('hotelId') hotelId: string): Promise<void> {
+    return this.hotelsService.removeHotel(hotelId);
   }
 }

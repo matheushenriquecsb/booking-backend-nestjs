@@ -31,7 +31,7 @@ const makeSut = async (): Promise<SutType> => {
   return { sut, userServiceSpy };
 };
 
-describe('GameController', () => {
+describe('UserController', () => {
   it('should be defined', async () => {
     const { sut } = await makeSut();
     expect(sut).toBeDefined();
