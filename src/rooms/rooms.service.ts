@@ -4,15 +4,20 @@ import { Room } from './model/room.model';
 import { Model } from 'mongoose';
 import { Hotel } from 'src/hotels/models/hotel.model';
 import { RoomRequestDto } from './dto/room-request.dto';
+import { RoomServiceInterface } from './interface/room-service.interface';
+import { UpdateRoomDto } from './dto/room-update.dto';
 
 @Injectable()
-export class RoomsService {
+export class RoomsService implements RoomServiceInterface {
   constructor(
     @InjectModel(Room.name) private roomModel: Model<Room>,
     @InjectModel(Hotel.name) private hotelModel: Model<Hotel>,
   ) {}
 
-  async createRoom(hotelId: string, roomDto: RoomRequestDto) {
+  async createRoom(
+    hotelId: string,
+    roomDto: RoomRequestDto,
+  ): Promise<Partial<Room>> {
     const hotel = await this.hotelModel.findOne({ _id: hotelId });
     if (!hotel) {
       throw new NotFoundException({
@@ -49,6 +54,23 @@ export class RoomsService {
     return room;
   }
 
+  async updateRoom(roomId: string, updateDto: UpdateRoomDto): Promise<Room> {
+    const roomUpdated = await this.roomModel.findOneAndUpdate(
+      { _id: roomId },
+      { $set: updateDto },
+      { new: true },
+    );
+
+    if (!roomUpdated) {
+      throw new NotFoundException({
+        code: HttpStatus.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    return roomUpdated;
+  }
+
   async deleteRoom(roomId: string, hotelId: string): Promise<void> {
     const hotel = await this.hotelModel.findById({ _id: hotelId });
     if (!hotel) {
@@ -57,8 +79,6 @@ export class RoomsService {
         message: 'Hotel not found',
       });
     }
-
-    console.log(hotel);
 
     const room = await this.roomModel.findById({ _id: roomId });
     if (!room) {

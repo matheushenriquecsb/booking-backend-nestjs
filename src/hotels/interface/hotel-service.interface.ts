@@ -12,6 +12,8 @@ export interface HotelServiceInterface {
 
   getHotelsType();
 
+  getHotelsByCity(cities: string);
+
   updateHotel(hotelId: string, updateHotelDto: UpdateHotelDto): Promise<Hotel>;
 
   removeHotel(hotelId: string): Promise<void>;

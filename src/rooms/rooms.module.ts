@@ -13,6 +13,17 @@ import { Hotel, HotelSchema } from 'src/hotels/models/hotel.model';
     ]),
   ],
   controllers: [RoomsController],
-  providers: [RoomsService],
+  providers: [
+    {
+      provide: 'RoomServiceInterface',
+      useClass: RoomsService,
+    },
+  ],
+  exports: [
+    {
+      provide: 'RoomServiceInterface',
+      useClass: RoomsService,
+    },
+  ],
 })
 export class RoomsModule {}

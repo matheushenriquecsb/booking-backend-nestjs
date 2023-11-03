@@ -17,8 +17,13 @@ export class Room {
   @Prop({ required: true })
   desc: string;
 
-  @Prop()
-  roomNumber: number;
+  @Prop([
+    {
+      number: { type: Number },
+      unavailableDates: { type: [Date] },
+    },
+  ])
+  roomNumbers: Record<string, any>[];
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);
