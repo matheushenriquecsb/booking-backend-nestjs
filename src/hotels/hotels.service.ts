@@ -59,6 +59,18 @@ export class HotelsService implements HotelServiceInterface {
     return;
   }
 
+  async getHotelsByCity(cities: string) {
+    const city = cities.split(',');
+
+    const list = await Promise.all(
+      city.map((city) => {
+        return this.hotelModel.countDocuments({ city: city });
+      }),
+    );
+
+    return list;
+  }
+
   async getHotelsType() {
     const hotelCount = await this.hotelModel.countDocuments({ type: 'hotel' });
     const apartmentCount = await this.hotelModel.countDocuments({

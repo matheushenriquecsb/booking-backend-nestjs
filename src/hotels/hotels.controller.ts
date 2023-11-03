@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   Inject,
+  Query,
 } from '@nestjs/common';
 
 import { CreateHotelDto } from './dto/create-hotel.dto';
@@ -33,7 +34,6 @@ export class HotelsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
   @Get('/find/:hotelId')
   findOneHotel(@Param('hotelId') hotelId: string): Promise<Hotel> {
     return this.hotelsService.findOneHotel(hotelId);
@@ -49,6 +49,12 @@ export class HotelsController {
   @Get('/countByType')
   getHotelsType(): Promise<Partial<Hotel>> {
     return this.hotelsService.getHotelsType();
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/countByCity')
+  getHotelsByCity(@Query('cities') cities: string) {
+    return this.hotelsService.getHotelsByCity(cities);
   }
 
   @HttpCode(HttpStatus.OK)
