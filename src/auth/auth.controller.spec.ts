@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { LoginUserRequestDto, RegisterUserRequestDto } from './dto';
+import { AuthServiceInterface } from './interface';
 import { AuthServiceSpy } from './test';
-import { RegisterUserRequestDto } from './dto';
 
 type SutType = {
   sut: AuthController;
@@ -14,14 +14,16 @@ const makeSut = async (): Promise<SutType> => {
     providers: [
       AuthController,
       {
-        provide: AuthService,
+        provide: 'AuthServiceInterface',
         useClass: AuthServiceSpy,
       },
     ],
   }).compile();
 
   const sut = module.get<AuthController>(AuthController);
-  const authServiceSpy = module.get<AuthService>(AuthService) as AuthServiceSpy;
+  const authServiceSpy = module.get<AuthServiceInterface>(
+    'AuthServiceInterface',
+  ) as AuthServiceSpy;
 
   return { sut, authServiceSpy };
 };
@@ -32,7 +34,7 @@ describe('AuthController', () => {
     expect(sut).toBeDefined();
   });
 
-  it('shoulde create a register', async () => {
+  it('should create a register', async () => {
     const { sut } = await makeSut();
 
     const payload: RegisterUserRequestDto = {
@@ -46,8 +48,21 @@ describe('AuthController', () => {
       isAdmin: true,
     };
 
-    const response = await sut.register(payload);
+    const response = await sut.registerUser(payload);
 
     expect(payload).toEqual(response);
+  });
+
+  it('should login a user', async () => {
+    const { sut } = await makeSut();
+
+    const payload: LoginUserRequestDto = {
+      username: 'Teste',
+      password: 'test@gmail.com',
+    };
+
+    const response = await sut.loginUser(payload);
+
+    expect(response).toEqual({ access_token: 'Teste' });
   });
 });

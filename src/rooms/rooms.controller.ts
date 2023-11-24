@@ -15,7 +15,7 @@ import {
 import { RoomRequestDto } from './dto/room-request.dto';
 import { RoomServiceInterface } from './interface/room-service.interface';
 import { Room } from './model/room.model';
-import { AuthGuard } from 'src/config/guards/permissions.guard';
+import { AuthGuard } from '../config/guards/permissions.guard';
 import { UpdateRoomDto } from './dto/room-update.dto';
 
 @Controller('rooms')
