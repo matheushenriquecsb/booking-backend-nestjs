@@ -56,7 +56,7 @@ export class HotelsService implements HotelServiceInterface {
   }
 
   async getHotelsRooms(hotelId: string) {
-    return;
+    return hotelId;
   }
 
   async getHotelsByCity(cities: string) {
