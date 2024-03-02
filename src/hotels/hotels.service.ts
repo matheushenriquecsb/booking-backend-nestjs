@@ -51,7 +51,11 @@ export class HotelsService implements HotelServiceInterface {
     return hotel;
   }
 
-  async getHotels(): Promise<Hotel[]> {
+  async getHotels(city: string): Promise<Hotel[]> {
+    if (city) {
+      const hotels = await this.hotelModel.find({ city: city });
+      return hotels;
+    }
     return this.hotelModel.find().exec();
   }
 

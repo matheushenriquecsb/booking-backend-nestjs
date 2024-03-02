@@ -6,7 +6,7 @@ export interface HotelServiceInterface {
 
   findOneHotel(hotelId: string): Promise<Hotel>;
 
-  getHotels(): Promise<Hotel[]>;
+  getHotels(city: string): Promise<Hotel[]>;
 
   getHotelsRooms(hotelId: string);
 

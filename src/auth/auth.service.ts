@@ -25,6 +25,7 @@ export class AuthService implements AuthServiceInterface {
   async registerUser(
     registerDto: RegisterUserRequestDto,
   ): Promise<Partial<User>> {
+    console.log(registerDto);
     const checkUser = await this.authModel.findOne({
       username: registerDto.username,
     });
@@ -68,15 +69,17 @@ export class AuthService implements AuthServiceInterface {
       username: loginDto.username,
     });
 
-    if (!user) {
-      throw new NotFoundException(`User ${loginDto.username} not found in db`);
-    }
+    if (!user)
+      throw new NotFoundException(
+        `User ${loginDto.username} not found in database`,
+      );
 
-    const checkPassword = bcrypt.compare(loginDto.password, user.password);
+    const checkPassword = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
 
-    if (!checkPassword) {
-      throw new BadRequestException('Wrong Credentials');
-    }
+    if (!checkPassword) throw new BadRequestException('Wrong Credentials');
 
     const payload = { id: user.id, isAdmin: user.isAdmin };
 

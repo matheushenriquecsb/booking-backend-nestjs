@@ -40,9 +40,9 @@ export class HotelsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get('/')
-  getHotels(): Promise<Hotel[]> {
-    return this.hotelsService.getHotels();
+  @Get()
+  getHotels(@Query('city') city: string): Promise<Hotel[]> {
+    return this.hotelsService.getHotels(city);
   }
 
   @HttpCode(HttpStatus.OK)
