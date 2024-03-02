@@ -13,6 +13,7 @@ import {
   RegisterUserRequestDto,
 } from './dto';
 
+import { ApiTags } from '@nestjs/swagger';
 import { AuthServiceInterface } from './interface';
 import { User } from './models/user.model';
 
@@ -23,6 +24,7 @@ export class AuthController {
     private readonly authService: AuthServiceInterface,
   ) {}
 
+  @ApiTags('Auth')
   @HttpCode(HttpStatus.CREATED)
   @Post('/register')
   async registerUser(
@@ -31,6 +33,7 @@ export class AuthController {
     return this.authService.registerUser(registerDto);
   }
 
+  @ApiTags('Auth')
   @HttpCode(HttpStatus.OK)
   @Post('/login')
   async loginUser(

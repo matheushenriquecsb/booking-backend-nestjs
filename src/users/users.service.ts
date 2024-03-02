@@ -33,7 +33,6 @@ export class UsersService implements UserServiceInterface {
     }
 
     const user = await this.userModel.findById({ _id: id }).exec();
-    console.log(user);
 
     if (!user) {
       throw new NotFoundException({

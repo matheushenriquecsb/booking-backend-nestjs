@@ -40,10 +40,6 @@ describe('AuthController', () => {
     const payload: RegisterUserRequestDto = {
       username: 'Teste',
       email: 'test@gmail.com',
-      country: 'Brasil',
-      city: 'Salvador',
-      phone: '71991910098',
-      img: '',
       password: '$2b$10$7nDjYXH1zuLRsXuRTkXYd.beejRPpGp4uF2jwpHc4ZDGbz5d4vgBy',
       isAdmin: true,
     };

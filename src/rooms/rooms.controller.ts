@@ -17,6 +17,7 @@ import { RoomServiceInterface } from './interface/room-service.interface';
 import { Room } from './model/room.model';
 import { AuthGuard } from '../config/guards/permissions.guard';
 import { UpdateRoomDto } from './dto/room-update.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('rooms')
 export class RoomsController {
@@ -25,6 +26,7 @@ export class RoomsController {
     private readonly roomsService: RoomServiceInterface,
   ) {}
 
+  @ApiTags('Rooms')
   @Post('/:hotelid')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -35,18 +37,21 @@ export class RoomsController {
     return this.roomsService.createRoom(hotelId, roomDto);
   }
 
+  @ApiTags('Rooms')
   @HttpCode(HttpStatus.OK)
   @Get()
   async getRooms(): Promise<Room[]> {
     return this.roomsService.getRooms();
   }
 
+  @ApiTags('Rooms')
   @HttpCode(HttpStatus.OK)
   @Get('/:roomid')
   async getRoom(@Param('roomid') roomId: string): Promise<Room> {
     return this.roomsService.getRoomById(roomId);
   }
 
+  @ApiTags('Rooms')
   @HttpCode(HttpStatus.OK)
   @Patch('/:roomid')
   async updateRoom(
@@ -56,6 +61,7 @@ export class RoomsController {
     return this.roomsService.updateRoom(roomId, roomUpdateDto);
   }
 
+  @ApiTags('Rooms')
   @HttpCode(HttpStatus.OK)
   @Delete('/:roomid/:hotelid')
   async deleteRoom(

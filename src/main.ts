@@ -8,10 +8,11 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Hotels API')
+    .setDescription('Complete Backend API for management of hotels')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('booking-backend-nestjs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();

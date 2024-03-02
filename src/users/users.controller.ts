@@ -15,6 +15,7 @@ import { AuthGuard } from '../config/guards/permissions.guard';
 import { User } from '../auth/models/user.model';
 import { UpdateUserDto } from './dto';
 import { UserServiceInterface } from './interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -23,6 +24,7 @@ export class UsersController {
     private readonly usersService: UserServiceInterface,
   ) {}
 
+  @ApiTags('Users')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get()
@@ -30,6 +32,7 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
+  @ApiTags('Users')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get(':userid')
@@ -37,6 +40,7 @@ export class UsersController {
     return this.usersService.findOneUser(userId);
   }
 
+  @ApiTags('Users')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Delete(':userid')
@@ -44,6 +48,7 @@ export class UsersController {
     return this.usersService.removeUser(userId);
   }
 
+  @ApiTags('Users')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Patch(':userid')
