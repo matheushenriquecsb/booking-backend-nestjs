@@ -16,6 +16,10 @@ export class HotelServiceSpy implements HotelServiceInterface {
     return Promise.resolve(mockResponseHotel);
   }
 
+  getHotel(): Promise<Hotel[]> {
+    return Promise.resolve(mockResponseHotels);
+  }
+
   getHotels(): Promise<Hotel[]> {
     return Promise.resolve(mockResponseHotels);
   }

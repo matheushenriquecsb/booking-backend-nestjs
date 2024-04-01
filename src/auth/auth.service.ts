@@ -25,7 +25,6 @@ export class AuthService implements AuthServiceInterface {
   async registerUser(
     registerDto: RegisterUserRequestDto,
   ): Promise<Partial<User>> {
-    console.log(registerDto);
     const checkUser = await this.authModel.findOne({
       username: registerDto.username,
     });

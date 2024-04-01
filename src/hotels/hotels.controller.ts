@@ -29,7 +29,7 @@ export class HotelsController {
 
   @ApiTags('Hotels')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Post()
   createHotel(@Body() createHotelDto: CreateHotelDto): Promise<Hotel> {
     return this.hotelsService.createHotel(createHotelDto);
@@ -42,11 +42,21 @@ export class HotelsController {
     return this.hotelsService.findOneHotel(hotelId);
   }
 
-  @ApiTags('Hotels')
+  @ApiTags('Hotel')
   @HttpCode(HttpStatus.OK)
   @Get()
-  getHotels(@Query('city') city: string): Promise<Hotel[]> {
-    return this.hotelsService.getHotels(city);
+  getHotel(@Query('city') city: string): Promise<Hotel> {
+    return this.hotelsService.getHotel(city);
+  }
+
+  @ApiTags('Hotels')
+  @HttpCode(HttpStatus.OK)
+  @Get('/featured')
+  getHotels(
+    @Query('featured') featured: string,
+    @Query('limit') limit: string,
+  ): Promise<Hotel> {
+    return this.hotelsService.getHotels(featured, limit);
   }
 
   @ApiTags('Hotels')

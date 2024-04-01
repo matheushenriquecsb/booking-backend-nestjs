@@ -4,9 +4,11 @@ import { Hotel } from '../models/hotel.model';
 export interface HotelServiceInterface {
   createHotel(createHotelDto: CreateHotelDto): Promise<Hotel>;
 
-  findOneHotel(hotelId: string): Promise<Hotel>;
+  findOneHotel(hotelId: string);
 
-  getHotels(city: string): Promise<Hotel[]>;
+  getHotel(city: string);
+
+  getHotels(featured: string, limit: string);
 
   getHotelsRooms(hotelId: string);
 
