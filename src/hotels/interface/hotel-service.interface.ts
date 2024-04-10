@@ -10,9 +10,9 @@ export interface HotelServiceInterface {
 
   getHotelsRooms(hotelId: string);
 
-  getHotelsType();
+  getHotelsType(): Promise<Array<object>>;
 
-  getHotelsByCity(cities: string);
+  getHotelsByCity(cities: string): Promise<Array<number>>;
 
   updateHotel(hotelId: string, updateHotelDto: UpdateHotelDto): Promise<Hotel>;
 

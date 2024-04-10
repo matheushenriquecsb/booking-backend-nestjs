@@ -32,11 +32,11 @@ export class HotelsService implements HotelServiceInterface {
   }
 
   async findOneHotel(id: string): Promise<Hotel> {
-    const hotelFromCache = await this.getHotelFromCache(id);
+    // const hotelFromCache = await this.getHotelFromCache(id);
 
-    if (hotelFromCache) {
-      return hotelFromCache;
-    }
+    // if (hotelFromCache) {
+    //   return hotelFromCache;
+    // }
 
     const hotel = await this.hotelModel.findOne({ _id: id }).exec();
     if (!hotel) {
@@ -59,19 +59,22 @@ export class HotelsService implements HotelServiceInterface {
     return hotelId;
   }
 
-  async getHotelsByCity(cities: string) {
+  async getHotelsByCity(cities: string): Promise<Array<number>> {
     const city = cities.split(',');
 
-    const list = await Promise.all(
-      city.map((city) => {
-        return this.hotelModel.countDocuments({ city: city });
-      }),
-    );
-
-    return list;
+    try {
+      const list = await Promise.all(
+        city.map((city) => {
+          return this.hotelModel.countDocuments({ city: city });
+        }),
+      );
+      return list;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  async getHotelsType() {
+  async getHotelsType(): Promise<Array<object>> {
     const hotelCount = await this.hotelModel.countDocuments({ type: 'hotel' });
     const apartmentCount = await this.hotelModel.countDocuments({
       type: 'apartment',

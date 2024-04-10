@@ -27,7 +27,7 @@ export class HotelsController {
   ) {}
 
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Post()
   createHotel(@Body() createHotelDto: CreateHotelDto): Promise<Hotel> {
     return this.hotelsService.createHotel(createHotelDto);
@@ -47,13 +47,13 @@ export class HotelsController {
 
   @HttpCode(HttpStatus.OK)
   @Get('/countByType')
-  getHotelsType(): Promise<Partial<Hotel>> {
+  getHotelsType(): Promise<Array<object>> {
     return this.hotelsService.getHotelsType();
   }
 
   @HttpCode(HttpStatus.OK)
   @Get('/countByCity')
-  getHotelsByCity(@Query('cities') cities: string) {
+  getHotelsByCity(@Query('cities') cities: string): Promise<Array<number>> {
     return this.hotelsService.getHotelsByCity(cities);
   }
 
