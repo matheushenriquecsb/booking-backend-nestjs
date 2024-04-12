@@ -42,10 +42,6 @@ export const mockResponseUser: RegisterUserRequestDto[] = [
   {
     username: 'carloss',
     email: 'carlos@gmail.com',
-<<<<<<< HEAD
-
-=======
->>>>>>> d923bada4d46ecf8e53dcd9d20e826d480eeaf01
     password: '123456M@a',
   },
   {
