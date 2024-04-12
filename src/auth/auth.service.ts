@@ -78,7 +78,7 @@ export class AuthService implements AuthServiceInterface {
       throw new BadRequestException('Wrong Credentials');
     }
 
-    const payload = { id: user.id, isAdmin: user.isAdmin };
+    const payload = { id: user.id };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
