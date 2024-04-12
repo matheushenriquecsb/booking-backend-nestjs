@@ -1,16 +1,16 @@
 import {
-  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsString,
   IsStrongPassword,
-  Matches,
-  MaxLength,
 } from 'class-validator';
 
+<<<<<<< HEAD
+=======
 import { username } from '../helpers/validations';
 import { ApiProperty } from '@nestjs/swagger';
 
+>>>>>>> d923bada4d46ecf8e53dcd9d20e826d480eeaf01
 export class RegisterUserRequestDto {
   @ApiProperty({
     example: 'matheus.batista',
@@ -18,8 +18,6 @@ export class RegisterUserRequestDto {
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(12)
-  @Matches(username)
   username: string;
 
   @ApiProperty({
@@ -29,18 +27,21 @@ export class RegisterUserRequestDto {
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  @MaxLength(50)
   email: string;
 
+<<<<<<< HEAD
+=======
   @ApiProperty({
     example: 'Teste@12345',
     required: true,
   })
+>>>>>>> d923bada4d46ecf8e53dcd9d20e826d480eeaf01
   @IsString()
   @IsStrongPassword()
   @IsNotEmpty()
-  @MaxLength(12)
   password: string;
+<<<<<<< HEAD
+=======
 
   @ApiProperty({
     example: 'true',
@@ -49,4 +50,5 @@ export class RegisterUserRequestDto {
   @IsBoolean()
   @IsNotEmpty()
   isAdmin: boolean;
+>>>>>>> d923bada4d46ecf8e53dcd9d20e826d480eeaf01
 }
