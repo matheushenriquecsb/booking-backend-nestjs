@@ -88,8 +88,6 @@ export class RoomsService implements RoomServiceInterface {
       });
     }
 
-    console.log(room);
-
     await this.roomModel.deleteOne({ _id: roomId });
 
     try {

@@ -51,8 +51,21 @@ export class HotelsService implements HotelServiceInterface {
     return hotel;
   }
 
-  async getHotels(): Promise<Hotel[]> {
+  async getHotel(city: string) {
+    if (city) {
+      const hotels = await this.hotelModel.find({ city: city });
+      return hotels;
+    }
     return this.hotelModel.find().exec();
+  }
+
+  async getHotels(featured: string, limit: string) {
+    if (featured) {
+      const hotels = await this.hotelModel
+        .find({ featured: featured })
+        .limit(+limit);
+      return hotels;
+    }
   }
 
   async getHotelsRooms(hotelId: string) {
@@ -82,15 +95,17 @@ export class HotelsService implements HotelServiceInterface {
     const resortCount = await this.hotelModel.countDocuments({
       type: 'resort',
     });
-    const villaCount = await this.hotelModel.countDocuments({ type: 'villa' });
-    const cabinCount = await this.hotelModel.countDocuments({ type: 'cabin' });
+    const chaleCount = await this.hotelModel.countDocuments({ type: 'chalé' });
+    const hostelCount = await this.hotelModel.countDocuments({
+      type: 'hostel',
+    });
 
     return [
       { type: 'hotel', count: hotelCount },
       { type: 'apartments', count: apartmentCount },
-      { type: 'resorts', count: resortCount },
-      { type: 'villas', count: villaCount },
-      { type: 'cabins', count: cabinCount },
+      { type: 'resort', count: resortCount },
+      { type: 'chalé', count: chaleCount },
+      { type: 'hostel', count: hostelCount },
     ];
   }
 

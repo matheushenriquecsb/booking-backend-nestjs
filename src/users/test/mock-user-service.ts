@@ -6,7 +6,7 @@ import { UpdateUserDto } from '../dto';
 export class UserServiceSpy implements UserServiceInterface {
   id = null;
   user = null;
-  findAllUsers(): Promise<User[]> {
+  findAllUsers(): Promise<Partial<User[]>> {
     return Promise.resolve(mockResponseUser);
   }
 
@@ -32,10 +32,6 @@ export class UserServiceSpy implements UserServiceInterface {
     return Promise.resolve({
       username: 'carloss',
       email: 'carlos@gmail.com',
-      country: 'France',
-      city: 'paris',
-      phone: '75991918877',
-      img: '',
       password: '123456M@a',
       isAdmin: true,
     });
@@ -46,7 +42,10 @@ export const mockResponseUser: RegisterUserRequestDto[] = [
   {
     username: 'carloss',
     email: 'carlos@gmail.com',
+<<<<<<< HEAD
 
+=======
+>>>>>>> d923bada4d46ecf8e53dcd9d20e826d480eeaf01
     password: '123456M@a',
   },
   {
