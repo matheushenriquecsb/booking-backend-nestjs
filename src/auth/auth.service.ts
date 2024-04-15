@@ -25,16 +25,6 @@ export class AuthService implements AuthServiceInterface {
   async registerUser(
     registerDto: RegisterUserRequestDto,
   ): Promise<Partial<User>> {
-    const checkUser = await this.authModel.findOne({
-      username: registerDto.username,
-    });
-
-    if (checkUser) {
-      throw new BadRequestException(
-        `User ${registerDto.username} already registered`,
-      );
-    }
-
     const checkEmail = await this.authModel.findOne({
       email: registerDto.email,
     });
@@ -53,9 +43,9 @@ export class AuthService implements AuthServiceInterface {
         password: hashedPassword,
       });
 
-      const { username, email } = user;
+      const { fullName, email } = user;
 
-      return { username, email };
+      return { fullName, email };
     } catch (error) {
       throw new Error(error);
     }
@@ -65,12 +55,12 @@ export class AuthService implements AuthServiceInterface {
     loginDto: LoginUserRequestDto,
   ): Promise<LoginUserResponseDto> {
     const user = await this.authModel.findOne({
-      username: loginDto.username,
+      email: loginDto.email,
     });
 
     if (!user)
       throw new NotFoundException(
-        `User ${loginDto.username} not found in database`,
+        `User with email ${loginDto.email}, not found in database`,
       );
 
     const checkPassword = await bcrypt.compare(

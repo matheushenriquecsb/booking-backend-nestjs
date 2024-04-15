@@ -14,7 +14,7 @@ export class UserServiceSpy implements UserServiceInterface {
     this.id = id;
 
     return Promise.resolve({
-      username: 'carloss',
+      fullName: 'carloss',
       email: 'carlos@gmail.com',
       password: '123456M@a',
     });
@@ -30,7 +30,7 @@ export class UserServiceSpy implements UserServiceInterface {
     this.user = user;
 
     return Promise.resolve({
-      username: 'carloss',
+      fullName: 'carloss',
       email: 'carlos@gmail.com',
       password: '123456M@a',
       isAdmin: true,
@@ -40,12 +40,12 @@ export class UserServiceSpy implements UserServiceInterface {
 
 export const mockResponseUser: RegisterUserRequestDto[] = [
   {
-    username: 'carloss',
+    fullName: 'carloss',
     email: 'carlos@gmail.com',
     password: '123456M@a',
   },
   {
-    username: 'carloss',
+    fullName: 'carloss',
     email: 'carlos@gmail.com',
     password: '123456M@a',
   },
