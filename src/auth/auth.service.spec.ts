@@ -7,7 +7,6 @@ import * as bcrypt from 'bcrypt';
 import { RegisterUserRequestDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { BadRequestException } from '@nestjs/common';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -36,28 +35,26 @@ describe('AuthService', () => {
 
   it('should create new user', async () => {
     const payload: RegisterUserRequestDto = {
-      username: 'existinguser',
+      fullName: 'existinguser',
       email: 'new@example.com',
       password: 'testpassword',
-      isAdmin: false,
     };
 
     const hashedPassword = await bcrypt.hash(payload.password, 10);
 
     const createdUser = {
-      username: payload.username,
+      fullName: payload.fullName,
       email: payload.email,
       password: hashedPassword,
-      isAdmin: payload.isAdmin,
     };
 
-    const { username, email } = createdUser;
+    const { fullName, email } = createdUser;
 
     jest.spyOn(userModel, 'findOne').mockResolvedValueOnce(null);
 
     const result = await service.registerUser(payload);
     expect(result).toEqual({
-      username,
+      fullName,
       email,
     });
   });

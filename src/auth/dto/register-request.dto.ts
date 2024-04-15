@@ -8,12 +8,12 @@ import {
 
 export class RegisterUserRequestDto {
   @ApiProperty({
-    example: 'matheus.batista',
+    example: 'Matheus Silva',
     required: true,
   })
   @IsString()
   @IsNotEmpty()
-  username: string;
+  fullName: string;
 
   @ApiProperty({
     example: 'matheus@teste.com',
