@@ -9,12 +9,14 @@ import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
 import {
+  LoginGithubRequestDto,
   LoginUserRequestDto,
   LoginUserResponseDto,
   RegisterUserRequestDto,
 } from './dto';
 import { AuthServiceInterface } from './interface';
 import { User } from './models/user.model';
+import { LoginGoogleRequestDto } from './dto/login-google-request.dto';
 
 @Injectable()
 export class AuthService implements AuthServiceInterface {
@@ -36,7 +38,6 @@ export class AuthService implements AuthServiceInterface {
     }
 
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-
     try {
       const user = await this.authModel.create({
         ...registerDto,
@@ -74,6 +75,34 @@ export class AuthService implements AuthServiceInterface {
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async loginGoogle(
+    payload: LoginGoogleRequestDto,
+  ): Promise<LoginUserResponseDto> {
+    const user = await this.authModel.findOne({
+      email: payload.email,
+    });
+
+    const payloadId = { id: user.id };
+
+    return {
+      access_token: await this.jwtService.signAsync(payloadId),
+    };
+  }
+
+  async loginGithub(
+    payload: LoginGithubRequestDto,
+  ): Promise<LoginUserResponseDto> {
+    const user = await this.authModel.findOne({
+      fullName: payload.fullName,
+    });
+
+    const payloadId = { id: user.id };
+
+    return {
+      access_token: await this.jwtService.signAsync(payloadId),
     };
   }
 }

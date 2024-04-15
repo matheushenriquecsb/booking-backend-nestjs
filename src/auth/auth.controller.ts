@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 
 import {
+  LoginGithubRequestDto,
+  LoginGoogleRequestDto,
   LoginUserRequestDto,
   LoginUserResponseDto,
   RegisterUserRequestDto,
@@ -40,5 +42,23 @@ export class AuthController {
     @Body() loginDto: LoginUserRequestDto,
   ): Promise<LoginUserResponseDto> {
     return this.authService.loginUser(loginDto);
+  }
+
+  @ApiTags('Auth')
+  @HttpCode(HttpStatus.OK)
+  @Post('/login-google')
+  async loginGoogle(
+    @Body() loginGoogleDto: LoginGoogleRequestDto,
+  ): Promise<LoginUserResponseDto> {
+    return this.authService.loginGoogle(loginGoogleDto);
+  }
+
+  @ApiTags('Auth')
+  @HttpCode(HttpStatus.OK)
+  @Post('/login-github')
+  async loginGithub(
+    @Body() loginGoogleDto: LoginGithubRequestDto,
+  ): Promise<LoginUserResponseDto> {
+    return this.authService.loginGithub(loginGoogleDto);
   }
 }

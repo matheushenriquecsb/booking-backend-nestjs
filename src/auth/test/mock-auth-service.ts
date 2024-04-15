@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  LoginGithubRequestDto,
+  LoginGoogleRequestDto,
   LoginUserRequestDto,
   LoginUserResponseDto,
   RegisterUserRequestDto,
@@ -18,6 +20,14 @@ export class AuthServiceSpy implements AuthServiceInterface {
 
   loginUser(loginDto: LoginUserRequestDto): Promise<LoginUserResponseDto> {
     this.loginDto = loginDto;
+    return Promise.resolve(mockLoginResponse());
+  }
+  loginGoogle(payload: LoginGoogleRequestDto) {
+    this.loginDto = payload;
+    return Promise.resolve(mockLoginResponse());
+  }
+  loginGithub(payload: LoginGithubRequestDto) {
+    this.loginDto = payload;
     return Promise.resolve(mockLoginResponse());
   }
 }
