@@ -1,64 +1,102 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { AuthController } from './auth.controller';
-import { LoginUserRequestDto, RegisterUserRequestDto } from './dto';
+import {
+  LoginGithubRequestDto,
+  LoginGoogleRequestDto,
+  LoginUserRequestDto,
+  LoginUserResponseDto,
+  RegisterUserRequestDto,
+} from './dto';
 import { AuthServiceInterface } from './interface';
-import { AuthServiceSpy } from './test';
-
-type SutType = {
-  sut: AuthController;
-  authServiceSpy: AuthServiceSpy;
-};
-
-const makeSut = async (): Promise<SutType> => {
-  const module: TestingModule = await Test.createTestingModule({
-    providers: [
-      AuthController,
-      {
-        provide: 'AuthServiceInterface',
-        useClass: AuthServiceSpy,
-      },
-    ],
-  }).compile();
-
-  const sut = module.get<AuthController>(AuthController);
-  const authServiceSpy = module.get<AuthServiceInterface>(
-    'AuthServiceInterface',
-  ) as AuthServiceSpy;
-
-  return { sut, authServiceSpy };
-};
+import { User } from './models/user.model';
 
 describe('AuthController', () => {
-  it('should be defined', async () => {
-    const { sut } = await makeSut();
-    expect(sut).toBeDefined();
+  let authController: AuthController;
+  let authService: AuthServiceInterface;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [AuthController],
+      providers: [
+        {
+          provide: 'AuthServiceInterface',
+          useValue: {
+            registerUser: jest.fn(),
+            loginUser: jest.fn(),
+            loginGoogle: jest.fn(),
+            loginGithub: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    authController = module.get<AuthController>(AuthController);
+    authService = module.get<AuthServiceInterface>('AuthServiceInterface');
   });
 
-  it('should create a register', async () => {
-    const { sut } = await makeSut();
-
-    const payload: RegisterUserRequestDto = {
-      username: 'Teste',
-      email: 'test@gmail.com',
-      password: '$2b$10$7nDjYXH1zuLRsXuRTkXYd.beejRPpGp4uF2jwpHc4ZDGbz5d4vgBy',
-      isAdmin: true,
+  it('should register a new user', async () => {
+    const registerDto: RegisterUserRequestDto = {
+      fullName: 'Teste Teste',
+      email: 'teste@gmail.com',
+      password: '12345@Ma',
     };
 
-    const response = await sut.registerUser(payload);
+    const mockUser: Partial<User> = {
+      fullName: 'Teste Teste',
+      email: 'teste@gmail.com',
+    };
 
-    expect(payload).toEqual(response);
+    (authService.registerUser as jest.Mock).mockResolvedValue(mockUser);
+
+    const result = await authController.registerUser(registerDto);
+
+    expect(result).toEqual(mockUser);
   });
 
-  it('should login a user', async () => {
-    const { sut } = await makeSut();
-
-    const payload: LoginUserRequestDto = {
-      username: 'Teste',
-      password: 'test@gmail.com',
+  it('should handle login error ', async () => {
+    const loginDto: LoginUserRequestDto = {
+      email: 'teste@gmail.com',
+      password: 'Teste@12345',
     };
 
-    const response = await sut.loginUser(payload);
+    (authService.loginUser as jest.Mock).mockImplementation(() => {
+      throw new HttpException('Login failed', HttpStatus.UNAUTHORIZED);
+    });
 
-    expect(response).toEqual({ access_token: 'Teste' });
+    await expect(authController.loginUser(loginDto)).rejects.toThrowError(
+      HttpException,
+    );
+  });
+
+  it('should login with google credentials', async () => {
+    const payload: LoginGoogleRequestDto = {
+      email: 'teste@gmail.com',
+    };
+
+    const mockResponse: LoginUserResponseDto = {
+      access_token: 'token',
+    };
+
+    (authService.loginGoogle as jest.Mock).mockResolvedValue(mockResponse);
+
+    const result = await authController.loginGoogle(payload);
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should login with github credentials', async () => {
+    const payload: LoginGithubRequestDto = {
+      fullName: 'Teste Teste',
+    };
+
+    const mockResponse: LoginUserResponseDto = {
+      access_token: 'token',
+    };
+
+    (authService.loginGithub as jest.Mock).mockResolvedValue(mockResponse);
+
+    const result = await authController.loginGithub(payload);
+    expect(result).toEqual(mockResponse);
   });
 });
