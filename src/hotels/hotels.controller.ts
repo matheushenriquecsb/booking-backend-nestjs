@@ -75,13 +75,6 @@ export class HotelsController {
 
   @ApiTags('Hotels')
   @HttpCode(HttpStatus.OK)
-  @Get('/room/:hotelid')
-  getHotelsRooms(@Param('hotelid') hotelId: string) {
-    return this.hotelsService.getHotelsRooms(hotelId);
-  }
-
-  @ApiTags('Hotels')
-  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Patch(':hotelId')
   update(

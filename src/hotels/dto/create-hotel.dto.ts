@@ -103,10 +103,6 @@ export class CreateHotelDto {
     example: '100',
     required: true,
   })
-  @IsNotEmpty()
-  @IsNumber()
-  assessments: number;
-
   @ApiProperty({
     example: 'true',
     required: false,

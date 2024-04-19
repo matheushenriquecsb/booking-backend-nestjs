@@ -12,7 +12,7 @@ import { Model } from 'mongoose';
 import { CreateHotelDto, UpdateHotelDto } from './dto';
 import { Hotel } from './models/hotel.model';
 import { HotelServiceInterface } from './interface';
-import { Room } from 'src/rooms/model/room.model';
+import { Room } from '../rooms/model/room.model';
 
 @Injectable()
 export class HotelsService implements HotelServiceInterface {
@@ -38,7 +38,7 @@ export class HotelsService implements HotelServiceInterface {
     //   return hotelFromCache;
     // }
 
-    const hotel = await this.hotelModel.findOne({ _id: id }).exec();
+    const hotel = await this.hotelModel.findOne({ _id: id });
     if (!hotel) {
       throw new NotFoundException({
         code: HttpStatus.NOT_FOUND,
@@ -66,10 +66,6 @@ export class HotelsService implements HotelServiceInterface {
         .limit(+limit);
       return hotels;
     }
-  }
-
-  async getHotelsRooms(hotelId: string) {
-    return hotelId;
   }
 
   async getHotelsByCity(cities: string): Promise<Array<number>> {

@@ -1,148 +1,184 @@
-import { ConfigModule } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { HotelsController } from './hotels.controller';
-import {
-  HotelServiceSpy,
-  mockResponseCountByType,
-  mockResponseHotel,
-  mockResponseHotels,
-} from './test/mock-hotel-service';
-import { HotelServiceInterface } from './interface';
 import { CreateHotelDto } from './dto';
-
-type SutType = {
-  sut: HotelsController;
-  hotelServiceSpy: HotelServiceSpy;
-};
-
-const makeSut = async (): Promise<SutType> => {
-  const module: TestingModule = await Test.createTestingModule({
-    imports: [ConfigModule.forRoot(), JwtModule],
-    providers: [
-      HotelsController,
-      {
-        provide: 'HotelServiceInterface',
-        useClass: HotelServiceSpy,
-      },
-    ],
-  }).compile();
-
-  const sut = module.get<HotelsController>(HotelsController);
-  const hotelServiceSpy = module.get<HotelServiceInterface>(
-    'HotelServiceInterface',
-  ) as HotelServiceSpy;
-
-  return { sut, hotelServiceSpy };
-};
+import { HotelsController } from './hotels.controller';
+import { HotelServiceInterface } from './interface';
+import { Hotel } from './models/hotel.model';
 
 describe('HotelController', () => {
-  it('should be defined', async () => {
-    const { sut } = await makeSut();
-    expect(sut).toBeDefined();
+  let hotelController: HotelsController;
+  let hotelService: HotelServiceInterface;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [HotelsController],
+      providers: [
+        JwtService,
+        {
+          provide: 'HotelServiceInterface',
+          useValue: {
+            createHotel: jest.fn(),
+            findOneHotel: jest.fn(),
+            getHotel: jest.fn(),
+            getHotels: jest.fn(),
+            getHotelsType: jest.fn(),
+            getHotelsByCity: jest.fn(),
+            updateHotel: jest.fn(),
+            removeHotel: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    hotelController = module.get<HotelsController>(HotelsController);
+    hotelService = module.get<HotelServiceInterface>('HotelServiceInterface');
   });
 
-  it('should create hotel successfully -> /POST /hotels', async () => {
-    const { sut, hotelServiceSpy } = await makeSut();
-
+  it('should register a new hotel', async () => {
     const payload: CreateHotelDto = {
-      name: 'Hotel Test',
-      type: 'Test',
+      name: 'Test',
+      type: 'Hotel',
       city: 'Salvador',
-      address: 'Itapua',
-      distance: '40',
-      photos: [],
-      title: 'Very Good',
-      desc: 'Hotel description',
+      address: 'Teste, 02',
+      distance: '123',
+      photos: ['Teste1'],
+      title: 'Teste',
+      desc: 'Teste muito bom',
       rating: 5,
-      rooms: [],
-      cheapestPrice: 34,
+      rooms: ['Teste 1'],
+      cheapestPrice: 300,
       featured: true,
     };
 
-    const response = await sut.createHotel(payload);
+    (hotelService.createHotel as jest.Mock).mockResolvedValue(Hotel);
 
-    expect(hotelServiceSpy.payload).toEqual(payload);
-    expect(response).toBe(mockResponseHotel);
+    const result = await hotelController.createHotel(payload);
+
+    expect(result).toEqual(Hotel);
   });
 
-  it('should get hotel by id successfully -> /GET /hotels/:id', async () => {
-    const { sut, hotelServiceSpy } = await makeSut();
+  it('should get hotel', async () => {
+    const payload = '1';
 
-    const hotelId = '1';
+    (hotelService.findOneHotel as jest.Mock).mockResolvedValue(Hotel);
 
-    const response = await sut.findOneHotel(hotelId);
+    const result = await hotelController.findOneHotel(payload);
 
-    expect(hotelServiceSpy.id).toEqual(hotelId);
-    expect(response).toBe(mockResponseHotel);
+    expect(result).toEqual(Hotel);
   });
 
-  it('should get all hotels successfully -> /GET /hotels/ ', async () => {
-    const { sut } = await makeSut();
+  it('should return hotels by city', async () => {
+    const mockCity = 'ExampleCity';
 
-    const response = await sut.getHotels();
-
-    expect(response).toBe(mockResponseHotels);
-  });
-
-  it('should get hotels by type successfully -> /GET /hotels/countByType ', async () => {
-    const { sut } = await makeSut();
-
-    const response = await sut.getHotelsType();
-
-    expect(response).toBe(mockResponseCountByType);
-  });
-
-  it('should update hotel by id successfully -> /PATCH /hotel/:id ', async () => {
-    const { sut, hotelServiceSpy } = await makeSut();
-
-    const hotelId = '1';
-
-    const payload = {
-      id: '1',
-      name: 'Hotel Atualizado',
-      type: 'Test',
-      city: 'Salvador',
-      address: 'Itapua',
-      distance: '40',
-      photos: [],
-      title: 'Very Good',
-      desc: 'Hotel description',
+    const mockHotel = {
+      name: 'Test',
+      type: 'Hotel',
+      city: 'ExampleCity',
+      address: 'Teste, 02',
+      distance: '123',
+      photos: ['Teste1'],
+      title: 'Teste',
+      desc: 'Teste muito bom',
       rating: 5,
-      rooms: [],
-      cheapestPrice: 34,
+      rooms: ['Teste 1'],
+      cheapestPrice: 300,
       featured: true,
     };
 
-    const response = await sut.update(hotelId, payload);
+    (hotelService.getHotel as jest.Mock).mockResolvedValue(mockHotel);
 
-    expect(hotelServiceSpy.id).toBe(hotelId);
-    expect(hotelServiceSpy.payload).toEqual(payload);
-    expect(response).toEqual({
-      id: 1,
-      name: 'Hotel Atualizado',
-      type: 'Test',
-      city: 'Salvador',
-      address: 'Itapua',
-      distance: '40',
-      photos: [],
-      title: 'Very Good',
-      desc: 'Hotel description',
-      rating: 5,
-      rooms: [],
-      cheapestPrice: 34,
-      featured: true,
-    });
+    const result = await hotelController.getHotel(mockCity);
+
+    expect(hotelService.getHotel).toHaveBeenCalledWith(mockCity);
+
+    expect(result).toEqual(mockHotel);
   });
 
-  it('should delete hotel successfully -> /DELETE /hotels/:id ', async () => {
-    const { sut } = await makeSut();
+  it('should return hotel by featured and limit', async () => {
+    const mockFeatured = 'true';
+    const mockLimit = '4';
 
+    const mockHotel = {
+      name: 'Test',
+      type: 'Hotel',
+      city: 'ExampleCity',
+      address: 'Teste, 02',
+      distance: '123',
+      photos: ['Teste1'],
+      title: 'Teste',
+      desc: 'Teste muito bom',
+      rating: 5,
+      rooms: ['Teste 1'],
+      cheapestPrice: 300,
+      featured: true,
+    };
+
+    (hotelService.getHotels as jest.Mock).mockResolvedValue(mockHotel);
+
+    await hotelController.getHotels(mockFeatured, mockLimit);
+
+    expect(hotelService.getHotels).toHaveBeenCalledWith(
+      mockFeatured,
+      mockLimit,
+    );
+  });
+
+  it('should return an array of objects representing hotel types', async () => {
+    const mockHotelTypes = [
+      { type: 'Type1', count: 5 },
+      { type: 'Type2', count: 10 },
+    ];
+
+    (hotelService.getHotelsType as jest.Mock).mockResolvedValue(mockHotelTypes);
+
+    const result = await hotelController.getHotelsType();
+
+    expect(result).toEqual(mockHotelTypes);
+  });
+
+  it('should return an array of number representing hotel cities', async () => {
+    const cities = 'City1,City2,City3';
+    const expectedResult = [10, 20, 15];
+
+    (hotelService.getHotelsByCity as jest.Mock).mockResolvedValue(
+      expectedResult,
+    );
+
+    const result = await hotelController.getHotelsByCity(cities);
+
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should update a hotel', async () => {
+    const hotelId = '1';
+    const mockHotel = {
+      name: 'Test',
+      type: 'Hotel',
+      city: 'ExampleCity',
+      address: 'Teste, 02',
+      distance: '123',
+      photos: ['Teste1'],
+      title: 'Teste',
+      desc: 'Teste muito bom',
+      rating: 5,
+      rooms: ['Teste 1'],
+      cheapestPrice: 300,
+      featured: true,
+    };
+
+    (hotelService.updateHotel as jest.Mock).mockResolvedValue(mockHotel);
+
+    const result = await hotelController.update(hotelId, mockHotel);
+
+    expect(result).toEqual(mockHotel);
+  });
+
+  it('should delete a hotel', async () => {
     const hotelId = '1';
 
-    const response = await sut.removeHotel(hotelId);
+    await hotelController.removeHotel(hotelId);
 
-    expect(response).toBeNull();
+    expect(hotelService.removeHotel).toHaveBeenCalledWith(hotelId);
   });
 });

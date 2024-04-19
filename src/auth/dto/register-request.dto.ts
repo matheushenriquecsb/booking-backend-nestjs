@@ -24,6 +24,10 @@ export class RegisterUserRequestDto {
   @IsNotEmpty()
   email: string;
 
+  @ApiProperty({
+    example: 'Teste@123',
+    required: true,
+  })
   @IsString()
   @IsStrongPassword()
   @IsNotEmpty()
