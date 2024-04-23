@@ -32,11 +32,11 @@ export class HotelsService implements HotelServiceInterface {
   }
 
   async findOneHotel(id: string): Promise<Hotel> {
-    // const hotelFromCache = await this.getHotelFromCache(id);
+    const hotelFromCache = await this.getHotelFromCache(id);
 
-    // if (hotelFromCache) {
-    //   return hotelFromCache;
-    // }
+    if (hotelFromCache) {
+      return hotelFromCache;
+    }
 
     const hotel = await this.hotelModel.findOne({ _id: id });
     if (!hotel) {
